@@ -1,4 +1,4 @@
-name: Test
+name: Java CI
 
 on:
   push:
@@ -10,23 +10,20 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v2
         with:
           java-version: '17'
+          distribution: 'adopt'
+          server-id: 'github'
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run Maven build and tests
-        run: mvn clean install
-
-      - name: Publish test reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-reports
-          path: target/surefire-reports
+      - name: Build with Maven
+        run: mvn -B clean package
